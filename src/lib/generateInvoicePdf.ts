@@ -62,24 +62,7 @@ function rule(doc: jsPDF, x1: number, y: number, x2: number, weight = 0.3) {
   doc.line(x1, y, x2, y);
 }
 
-function badge(
-  doc: jsPDF,
-  text: string,
-  x: number,
-  y: number,
-  bgColor: [number, number, number],
-  textColor: [number, number, number],
-  radius = 3,
-) {
-  const w = doc.getTextWidth(text) + 8;
-  const h = 7;
-  rgb(doc, bgColor, 'fill');
-  doc.roundedRect(x, y - 5.5, w, h, radius, radius, 'F');
-  rgb(doc, textColor, 'text');
-  doc.setFontSize(7.5);
-  doc.setFont(FONT.bold, 'bold');
-  doc.text(text, x + 4, y - 0.5);
-}
+
 
 /** Render a currency amount as two tightly-spaced text calls so the symbol
  *  never drifts away from the digits (jsPDF kerning can gap them). */
@@ -162,7 +145,7 @@ export async function downloadInvoicePdf(data: InvoicePdfData, filename: string)
 
   Y = HEADER_H + 1.5;
 
-  // ── 2. Meta row (dates + status) ───────────────────────────────────────────
+  // ── 2. Meta row (dates) ─────────────────────────────────────────────────────────────
   const META_H = 20;
   rgb(doc, COLORS.surface, 'fill');
   doc.rect(0, Y, PW, META_H, 'F');
@@ -186,17 +169,7 @@ export async function downloadInvoicePdf(data: InvoicePdfData, filename: string)
     doc.text(value, mx, Y + 15);
   });
 
-  // Status badge – right
-  const now = new Date();
-  const due = dueDate ? new Date(dueDate) : null;
-  const status = !due ? 'DRAFT' : due < now ? 'OVERDUE' : 'DUE';
-  const badgeColor: [number, number, number] =
-    status === 'OVERDUE' ? COLORS.danger :
-      status === 'DUE' ? COLORS.accent :
-        COLORS.inkSoft;
-  if (status !== 'DRAFT') {
-    badge(doc, status, PW - M - doc.getTextWidth(status) - 10, Y + 12, badgeColor, COLORS.white);
-  }
+
 
   Y += META_H + 1.5;
 
