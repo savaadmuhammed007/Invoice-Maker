@@ -52,192 +52,194 @@ export const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
     const currencySymbol = getCurrencySymbol(currency);
 
     return (
-      <div
-        ref={ref}
-        className="invoice-preview bg-card p-8 max-w-[800px] mx-auto"
-        style={{ minHeight: '1000px' }}
-      >
-        {/* Header */}
-        <div className="flex justify-between items-start mb-8">
-          <div>
-            {company?.logo_url ? (
-              <img
-                src={company.logo_url}
-                alt="Company Logo"
-                className="h-16 w-auto object-contain mb-4"
-              />
-            ) : (
-              <div className="h-16 w-16 bg-primary rounded-lg flex items-center justify-center mb-4">
-                <span className="text-2xl font-bold text-primary-foreground">
-                  {company?.name?.charAt(0) || 'C'}
-                </span>
-              </div>
-            )}
-            <h1 className="text-2xl font-bold text-foreground">
-              {company?.name || 'Your Company'}
-            </h1>
-            {company?.address && (
-              <p className="text-sm text-muted-foreground mt-1">{company.address}</p>
-            )}
-            {company?.city && company?.country && (
-              <p className="text-sm text-muted-foreground">
-                {company.city}, {company.country} {company.postal_code}
-              </p>
-            )}
-            {company?.email && (
-              <p className="text-sm text-muted-foreground">{company.email}</p>
-            )}
-            {company?.phone && (
-              <p className="text-sm text-muted-foreground">{company.phone}</p>
-            )}
-            {company?.tax_id && (
-              <p className="text-sm text-muted-foreground mt-2">
-                Tax ID: {company.tax_id}
-              </p>
-            )}
-          </div>
-
-          <div className="text-right">
-            <h2 className="text-3xl font-bold text-primary mb-2">INVOICE</h2>
-            <p className="text-lg font-medium text-foreground">{invoiceNumber || 'INV-000'}</p>
-            <div className="mt-4 space-y-1">
-              <p className="text-sm text-muted-foreground">
-                Issue Date:{' '}
-                <span className="text-foreground font-medium">
-                  {issueDate ? format(new Date(issueDate), 'MMM dd, yyyy') : '-'}
-                </span>
-              </p>
-              {dueDate && (
-                <p className="text-sm text-muted-foreground">
-                  Due Date:{' '}
-                  <span className="text-foreground font-medium">
-                    {format(new Date(dueDate), 'MMM dd, yyyy')}
+      <div className="w-full overflow-x-auto lg:overflow-x-visible pb-8">
+        <div
+          ref={ref}
+          className="invoice-preview bg-white shadow-2xl mx-auto overflow-hidden text-[#0F1117] font-sans transition-all duration-300"
+          style={{
+            width: '100%',
+            maxWidth: '800px',
+            minHeight: '1131px',
+            fontSize: '12px',
+            lineHeight: '1.4',
+            position: 'relative',
+            aspectRatio: '1 / 1.414'
+          }}
+        >
+          {/* ── 1. Dark header band ──────────────────────────────────────────────────── */}
+          <div className="bg-[#0F1117] px-[8%] pt-[6%] pb-[5%] flex justify-between items-start relative">
+            <div>
+              <h1 className="text-white font-bold text-[24px] mb-2 leading-tight">
+                {company?.name || 'Your Company'}
+              </h1>
+              <div className="text-[#A0A5B0] text-[12px] flex flex-wrap gap-x-4 gap-y-1">
+                {company?.email && (
+                  <span className="flex items-center gap-2">
+                    {company.email}
                   </span>
-                </p>
-              )}
+                )}
+                {company?.phone && (
+                  <span className="flex items-center gap-2">
+                    <span className="opacity-50">·</span>
+                    {company.phone}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="text-right">
+              <h2 className="text-white font-bold text-[36px] leading-none mb-2">INVOICE</h2>
+              <p className="text-[#6366F1] text-[13px] font-medium tracking-wide">
+                {invoiceNumber || 'INV-000'}
+              </p>
             </div>
           </div>
-        </div>
+          {/* Thin accent rule under header */}
+          <div className="h-[6px] w-full bg-[#6366F1]" />
 
-        {/* Bill To */}
-        <div className="mb-8 p-4 bg-muted rounded-lg">
-          <h3 className="text-sm font-semibold text-muted-foreground mb-2">BILL TO</h3>
-          <p className="font-medium text-foreground">{clientName || 'Client Name'}</p>
-          {clientEmail && (
-            <p className="text-sm text-muted-foreground">{clientEmail}</p>
-          )}
-          {clientAddress && (
-            <p className="text-sm text-muted-foreground">{clientAddress}</p>
-          )}
-          {clientPhone && (
-            <p className="text-sm text-muted-foreground">{clientPhone}</p>
-          )}
-        </div>
+          {/* ── 2. Meta row (dates) ──────────────────────────────────────────────────── */}
+          <div className="bg-[#F8F8FA] px-[8%] py-[4%] flex gap-x-12 flex-wrap gap-y-4">
+            {issueDate && (
+              <div className="min-w-[120px]">
+                <label className="block text-[#646A78] text-[10px] font-bold tracking-wider mb-1">ISSUE DATE</label>
+                <div className="text-[#282C37] text-[14px] font-bold">
+                  {format(new Date(issueDate), 'MMM dd, yyyy')}
+                </div>
+              </div>
+            )}
+            {dueDate && (
+              <div className="min-w-[120px]">
+                <label className="block text-[#646A78] text-[10px] font-bold tracking-wider mb-1">DUE DATE</label>
+                <div className="text-[#282C37] text-[14px] font-bold">
+                  {format(new Date(dueDate), 'MMM dd, yyyy')}
+                </div>
+              </div>
+            )}
+          </div>
 
-        {/* Line Items */}
-        <div className="mb-8">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b-2 border-border">
-                <th className="text-left py-3 text-sm font-semibold text-muted-foreground">
-                  Description
-                </th>
-                <th className="text-right py-3 text-sm font-semibold text-muted-foreground w-24">
-                  Qty
-                </th>
-                <th className="text-right py-3 text-sm font-semibold text-muted-foreground w-32">
-                  Unit Price
-                </th>
-                <th className="text-right py-3 text-sm font-semibold text-muted-foreground w-32">
-                  Amount
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.length > 0 ? (
-                items.map((item, index) => (
-                  <tr key={index} className="border-b border-border">
-                    <td className="py-3 text-foreground">
-                      {item.description || 'Item description'}
-                    </td>
-                    <td className="py-3 text-right text-foreground">{item.quantity}</td>
-                    <td className="py-3 text-right text-foreground">
-                      {currencySymbol}
-                      {Number(item.unit_price).toFixed(2)}
-                    </td>
-                    <td className="py-3 text-right font-medium text-foreground">
-                      {currencySymbol}
-                      {Number(item.amount).toFixed(2)}
-                    </td>
+          <div className="h-[2px] w-full bg-white" />
+
+          {/* ── 3. Addresses – two-column ────────────────────────────────────────────── */}
+          <div className="px-[8%] py-[6%] flex flex-col sm:flex-row gap-x-12 gap-y-8">
+            {/* FROM */}
+            <div className="flex-1">
+              <label className="block text-[#6366F1] text-[10px] font-bold tracking-wider mb-2">FROM</label>
+              <div className="text-[#282C37] text-[15px] font-bold mb-2">
+                {company?.name || 'Your Company'}
+              </div>
+              <div className="text-[#646A78] text-[12px] space-y-1">
+                {company?.address && <p>{company.address}</p>}
+                {(company?.city || company?.country) && (
+                  <p>{[company.city, company.country, company.postal_code].filter(Boolean).join(', ')}</p>
+                )}
+                {company?.tax_id && <p className="mt-2 pt-2 border-t border-[#E2E4E9]">Tax ID: {company.tax_id}</p>}
+              </div>
+            </div>
+
+            {/* BILL TO */}
+            <div className="flex-1">
+              <label className="block text-[#6366F1] text-[10px] font-bold tracking-wider mb-2">BILL TO</label>
+              <div className="text-[#282C37] text-[15px] font-bold mb-2">
+                {clientName || 'Client Name'}
+              </div>
+              <div className="text-[#646A78] text-[12px] space-y-1">
+                {clientEmail && <p>{clientEmail}</p>}
+                {clientAddress && <p>{clientAddress}</p>}
+                {clientPhone && <p>{clientPhone}</p>}
+              </div>
+            </div>
+          </div>
+
+          <div className="px-[8%]">
+            <div className="h-[1px] w-full bg-[#E2E4E9]" />
+          </div>
+
+          {/* ── 4. Items table ───────────────────────────────────────────────────────── */}
+          <div className="px-[8%] py-[6%]">
+            <div className="overflow-hidden rounded-sm border border-[#E2E4E9]">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-[#EEF2FF]">
+                    <th className="text-left py-4 px-4 text-[#4338CA] text-[11px] font-bold tracking-wider">DESCRIPTION</th>
+                    <th className="text-right py-4 px-4 text-[#4338CA] text-[11px] font-bold tracking-wider w-20">QTY</th>
+                    <th className="text-right py-4 px-4 text-[#4338CA] text-[11px] font-bold tracking-wider w-32">UNIT PRICE</th>
+                    <th className="text-right py-4 px-4 text-[#4338CA] text-[11px] font-bold tracking-wider w-32">AMOUNT</th>
                   </tr>
-                ))
-              ) : (
-                <tr className="border-b border-border">
-                  <td className="py-3 text-muted-foreground" colSpan={4}>
-                    No items added yet
-                  </td>
-                </tr>
+                </thead>
+                <tbody className="divide-y divide-[#E2E4E9]">
+                  {items.length > 0 ? (
+                    items.map((item, idx) => (
+                      <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-[#F2F3F6]'}>
+                        <td className="py-4 px-4 text-[#282C37] text-[13px] align-top">{item.description || '-'}</td>
+                        <td className="py-4 px-4 text-[#646A78] text-[13px] text-right align-top">{item.quantity}</td>
+                        <td className="py-4 px-4 text-[#646A78] text-[13px] text-right align-top">
+                          {currencySymbol}{Number(item.unit_price).toFixed(2)}
+                        </td>
+                        <td className="py-4 px-4 text-[#282C37] text-[13px] font-bold text-right align-top">
+                          {currencySymbol}{Number(item.amount).toFixed(2)}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={4} className="py-12 text-center text-[#A0A5B0] text-[14px]">No items added yet</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* ── 5. Summary block ─────────────────────────────────────────────────────── */}
+          <div className="px-[8%] pb-[8%] flex justify-end">
+            <div className="w-full max-w-[320px] space-y-3">
+              <div className="flex justify-between items-center px-4">
+                <span className="text-[#646A78] text-[13px]">Subtotal</span>
+                <span className="text-[#282C37] text-[13px] font-medium">{currencySymbol}{subtotal.toFixed(2)}</span>
+              </div>
+
+              {discountPercent > 0 && (
+                <div className="flex justify-between items-center px-4">
+                  <span className="text-[#646A78] text-[13px]">Discount ({discountPercent}%)</span>
+                  <span className="text-[#DC2626] text-[13px] font-medium">-{currencySymbol}{discountAmount.toFixed(2)}</span>
+                </div>
               )}
-            </tbody>
-          </table>
-        </div>
 
-        {/* Totals */}
-        <div className="flex justify-end mb-8">
-          <div className="w-72 space-y-2">
-            <div className="flex justify-between py-2">
-              <span className="text-muted-foreground">Subtotal</span>
-              <span className="font-medium text-foreground">
-                {currencySymbol}
-                {subtotal.toFixed(2)}
-              </span>
-            </div>
+              {taxRate > 0 && (
+                <div className="flex justify-between items-center px-4">
+                  <span className="text-[#646A78] text-[13px]">Tax ({taxRate}%)</span>
+                  <span className="text-[#282C37] text-[13px] font-medium">{currencySymbol}{taxAmount.toFixed(2)}</span>
+                </div>
+              )}
 
-            {discountPercent > 0 && (
-              <div className="flex justify-between py-2">
-                <span className="text-muted-foreground">
-                  Discount ({discountPercent}%)
-                </span>
-                <span className="font-medium text-destructive">
-                  -{currencySymbol}
-                  {discountAmount.toFixed(2)}
-                </span>
+              <div className="mt-4 bg-[#6366F1] rounded-lg px-6 py-4 flex justify-between items-center shadow-lg transition-transform hover:scale-[1.02]">
+                <span className="text-white text-[16px] font-bold">Total</span>
+                <span className="text-white text-[20px] font-extrabold">{currencySymbol}{total.toFixed(2)}</span>
               </div>
-            )}
-
-            {taxRate > 0 && (
-              <div className="flex justify-between py-2">
-                <span className="text-muted-foreground">Tax ({taxRate}%)</span>
-                <span className="font-medium text-foreground">
-                  {currencySymbol}
-                  {taxAmount.toFixed(2)}
-                </span>
-              </div>
-            )}
-
-            <div className="flex justify-between py-3 border-t-2 border-foreground">
-              <span className="text-lg font-bold text-foreground">Total</span>
-              <span className="text-lg font-bold text-primary">
-                {currencySymbol}
-                {total.toFixed(2)}
-              </span>
             </div>
           </div>
-        </div>
 
-        {/* Notes */}
-        {notes && (
-          <div className="border-t border-border pt-6">
-            <h3 className="text-sm font-semibold text-muted-foreground mb-2">NOTES</h3>
-            <p className="text-sm text-foreground whitespace-pre-wrap">{notes}</p>
+          {/* ── 6. Notes ─────────────────────────────────────────────────────────────── */}
+          {notes && (
+            <div className="px-[8%] py-[6%] border-t border-[#E2E4E9] bg-[#F8F8FA]/50">
+              <label className="block text-[#6366F1] text-[11px] font-bold tracking-wider mb-3">NOTES & INSTRUCTIONS</label>
+              <div className="text-[#646A78] text-[13px] leading-relaxed whitespace-pre-wrap max-w-2xl">
+                {notes}
+              </div>
+            </div>
+          )}
+
+          {/* ── 7. Footer strip ──────────────────────────────────────────────────────── */}
+          <div className="absolute bottom-0 left-0 w-full">
+            <div className="h-[1px] w-full bg-[#E2E4E9]" />
+            <div className="bg-[#F8F8FA] px-[8%] py-[4%] flex justify-between items-center">
+              <p className="text-[#A0A5B0] text-[11px] font-medium italic">Thank you for your business.</p>
+              <div className="flex items-center gap-4">
+                <span className="h-4 w-[1px] bg-[#E2E4E9]" />
+                <p className="text-[#A0A5B0] text-[11px] font-bold tracking-widest">{invoiceNumber || ''}</p>
+              </div>
+            </div>
           </div>
-        )}
-
-        {/* Footer */}
-        <div className="mt-12 pt-6 border-t border-border text-center">
-          <p className="text-sm text-muted-foreground">
-            Thank you for your business!
-          </p>
         </div>
       </div>
     );
