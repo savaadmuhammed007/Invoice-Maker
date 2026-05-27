@@ -106,12 +106,18 @@ export function useAuth() {
   };
 
   const updateEmail = async (newEmail: string) => {
-    const { data, error } = await supabase.auth.updateUser({ email: newEmail });
+    const { data, error } = await supabase.auth.updateUser(
+      { email: newEmail },
+      { emailRedirectTo: window.location.origin }
+    );
     return { data, error };
   };
 
   const updatePassword = async (newPassword: string) => {
-    const { data, error } = await supabase.auth.updateUser({ password: newPassword });
+    const { data, error } = await supabase.auth.updateUser(
+      { password: newPassword },
+      { emailRedirectTo: window.location.origin }
+    );
     return { data, error };
   };
 

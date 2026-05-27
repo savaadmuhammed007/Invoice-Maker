@@ -144,6 +144,7 @@ export default function InvoiceList() {
   };
 
 
+
   if (authLoading || companyLoading) {
     return (
       <DashboardLayout>
@@ -329,6 +330,7 @@ export default function InvoiceList() {
                     <Download className="mr-2 h-4 w-4" />
                     Download PDF
                   </Button>
+
                 </div>
                 <InvoicePreview
                   company={company}
@@ -376,6 +378,9 @@ export default function InvoiceList() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+
+
       </div>
     </DashboardLayout>
   );

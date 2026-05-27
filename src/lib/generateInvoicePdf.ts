@@ -251,7 +251,7 @@ export async function downloadInvoicePdf(data: InvoicePdfData, filename: string)
     const split = doc.splitTextToSize(desc, DESC_MAX_W);
     const rowH = Math.max(split.length * 5.5 + 5, 12);
 
-    if (Y + rowH > PH - 40) {
+    if (Y + rowH > PH - 20) {
       doc.addPage();
       Y = 20;
     }
@@ -284,7 +284,7 @@ export async function downloadInvoicePdf(data: InvoicePdfData, filename: string)
   Y += 8;
 
   // ── 5. Summary block ───────────────────────────────────────────────────────
-  if (Y > 230) { doc.addPage(); Y = 20; }
+  if (Y > PH - 50) { doc.addPage(); Y = 20; }
 
   // Summary aligns to the same right edge as AMOUNT column
   const SUMM_X = COL_AMOUNT;
@@ -344,7 +344,9 @@ export async function downloadInvoicePdf(data: InvoicePdfData, filename: string)
 
   // ── 6. Notes ───────────────────────────────────────────────────────────────
   if (notes) {
-    if (Y > 260) { doc.addPage(); Y = 20; }
+    const splitNotes = doc.splitTextToSize(notes, W);
+    const notesH = splitNotes.length * 5 + 10;
+    if (Y + notesH > PH - 20) { doc.addPage(); Y = 20; }
 
     doc.setFont(FONT.bold, 'bold');
     doc.setFontSize(8);
@@ -355,22 +357,27 @@ export async function downloadInvoicePdf(data: InvoicePdfData, filename: string)
     doc.setFont(FONT.normal, 'normal');
     doc.setFontSize(8.5);
     rgb(doc, COLORS.inkSoft, 'text');
-    const splitNotes = doc.splitTextToSize(notes, W);
     doc.text(splitNotes, M, Y);
     Y += splitNotes.length * 5 + 6;
   }
 
-  // ── 7. Footer strip ────────────────────────────────────────────────────────
-  const FOOT_Y = PH - 14;
-  rule(doc, 0, FOOT_Y - 2, PW, 0.3);
-  rgb(doc, COLORS.surface, 'fill');
-  doc.rect(0, FOOT_Y - 2, PW, 16, 'F');
+  // ── 7. Footer strip (Draw on all pages) ────────────────────────────────────
+  const totalPages = doc.getNumberOfPages();
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    const FOOT_Y = PH - 14;
+    rule(doc, 0, FOOT_Y - 2, PW, 0.3);
+    rgb(doc, COLORS.surface, 'fill');
+    doc.rect(0, FOOT_Y - 2, PW, 16, 'F');
 
-  doc.setFont(FONT.normal, 'normal');
-  doc.setFontSize(7.5);
-  rgb(doc, COLORS.inkFaint, 'text');
-  doc.text('Thank you for your business.', M, FOOT_Y + 5);
-  doc.text(invoiceNumber || '', PW - M, FOOT_Y + 5, { align: 'right' });
+    doc.setFont(FONT.normal, 'normal');
+    doc.setFontSize(7.5);
+    rgb(doc, COLORS.inkFaint, 'text');
+    doc.text('Thank you for your business.', M, FOOT_Y + 5);
+    
+    const pageStr = `Page ${i} of ${totalPages}`;
+    doc.text(`${invoiceNumber || ''}   ·   ${pageStr}`, PW - M, FOOT_Y + 5, { align: 'right' });
+  }
 
   doc.save(filename);
 }

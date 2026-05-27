@@ -60,6 +60,7 @@ export function InvoiceCard({ invoice, onView, onDelete, onDownload, onStatusCha
               <Download className="mr-2 h-4 w-4" />
               Download PDF
             </DropdownMenuItem>
+
             <DropdownMenuItem onClick={() => onStatusChange(invoice, isPaid ? 'unpaid' : 'paid')}>
               {isPaid ? (
                 <><XCircle className="mr-2 h-4 w-4" />Mark as Unpaid</>

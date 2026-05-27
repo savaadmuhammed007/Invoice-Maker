@@ -366,12 +366,8 @@ export default function CreateInvoice() {
 
             {/* Line Items */}
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
+              <CardHeader>
                 <CardTitle>Line Items</CardTitle>
-                <Button variant="outline" size="sm" onClick={addItem}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Item
-                </Button>
               </CardHeader>
               <CardContent className="space-y-4">
                 {items.map((item, index) => (
@@ -413,6 +409,12 @@ export default function CreateInvoice() {
                     </Button>
                   </div>
                 ))}
+                <div className="pt-2">
+                  <Button variant="outline" size="sm" onClick={addItem} className="w-full sm:w-auto">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Item
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 
@@ -491,7 +493,10 @@ export default function CreateInvoice() {
               notes={notes}
             />
           </div>
+
+
         </div>
+
       </div>
     </DashboardLayout>
   );
